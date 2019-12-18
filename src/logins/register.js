@@ -11,19 +11,16 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-export default class signIn extends Component {
+export default class regIn extends Component {
   state = {
     backgroundColor: "rgba(255,255,255,0.2)",
-    backgroundColor1: "rgba(255,255,255,0.2)"
+    backgroundColor1: "rgba(255,255,255,0.2)",
+    backgroundColor2: "rgba(255,255,255,0.2)",
+    backgroundColor3: "rgba(255,255,255,0.2)"
   };
 
   navigateToDash = () => {
     this.props.navigation.navigate("App");
-    console.log("worked");
-  };
-
-  navigateToReg = () => {
-    this.props.navigation.navigate("RegLoading");
     console.log("worked");
   };
 
@@ -39,6 +36,20 @@ export default class signIn extends Component {
     this.setState({
       backgroundColor1: "white",
       borderRadius1: 15,
+      color1: "#10316b"
+    });
+  };
+  onFoc2 = () => {
+    this.setState({
+      backgroundColor2: "white",
+      borderRadius2: 15,
+      color1: "#10316b"
+    });
+  };
+  onFoc3 = () => {
+    this.setState({
+      backgroundColor3: "white",
+      borderRadius3: 15,
       color1: "#10316b"
     });
   };
@@ -84,6 +95,23 @@ export default class signIn extends Component {
               fontFamily: "Roboto",
               height: 70,
               width: 270,
+              color: this.state.color,
+              fontWeight: "bold",
+              backgroundColor: this.state.backgroundColor2,
+              fontSize: 18,
+              textAlign: "center",
+              borderRadius: this.state.borderRadius2
+            }}
+            placeholder="Email"
+            onFocus={this.onFoc2}
+          />
+          <TextInput
+            style={{
+              marginBottom: 20,
+              flex: 1,
+              fontFamily: "Roboto",
+              height: 70,
+              width: 270,
               color: this.state.color1,
               fontWeight: "bold",
               backgroundColor: this.state.backgroundColor1,
@@ -95,20 +123,34 @@ export default class signIn extends Component {
             secureTextEntry={true}
             placeholder="Password"
           />
+          <TextInput
+            style={{
+              marginBottom: 20,
+              flex: 1,
+              fontFamily: "Roboto",
+              height: 70,
+              width: 270,
+              color: this.state.color1,
+              fontWeight: "bold",
+              backgroundColor: this.state.backgroundColor3,
+              fontSize: 18,
+              textAlign: "center",
+              borderRadius: this.state.borderRadius3
+            }}
+            onFocus={this.onFoc3}
+            secureTextEntry={true}
+            placeholder="Password"
+          />
         </View>
 
         <View style={styleMain.bottom}>
           <View style={styleMain.btns}>
             <Button
-              title="  Sign in  "
+              title="  REGISTER  "
               color="#df42d1"
               onPress={this.navigateToDash}
             />
-            <Button
-              title="  Sign up  "
-              color="#df42d1"
-              onPress={this.navigateToReg}
-            />
+            
           </View>
         </View>
       </LinearGradient>
@@ -128,7 +170,7 @@ const styleMain = StyleSheet.create({
     justifyContent: "center"
   },
   lower: {
-    flex: 1,
+    flex: 2,
     alignItems: "center",
     elevation: 2
 

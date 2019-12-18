@@ -6,7 +6,7 @@ import Screen1 from './src/Dash/screen1'
 import Screen2 from './src/Dash/screen2'
 import Screen3 from './src/Dash/screen3'
 import signIn from './src/logins/signIn'
-
+import regIn from './src/logins/register'
 
 const signUp = "Incomple";
 
@@ -37,6 +37,7 @@ const AppStack = createDrawerNavigator({
 export default createAppContainer(createSwitchNavigator(
   {
     AuthLoading: signIn,
+    RegLoading:regIn,
     App: AppStack,
   },
   {
