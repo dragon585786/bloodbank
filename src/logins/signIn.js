@@ -11,10 +11,15 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
+
+import * as firebase from "firebase";
+
 export default class signIn extends Component {
   state = {
     backgroundColor: "rgba(255,255,255,0.2)",
-    backgroundColor1: "rgba(255,255,255,0.2)"
+    backgroundColor1: "rgba(255,255,255,0.2)",
+    email:'',
+    password:'',
   };
 
   navigateToDash = () => {
@@ -74,8 +79,9 @@ export default class signIn extends Component {
               textAlign: "center",
               borderRadius: this.state.borderRadius
             }}
-            placeholder="UserName"
+            placeholder="Email Id"
             onFocus={this.onFoc}
+            autoCapitalize='none'
           />
           <TextInput
             style={{
@@ -93,6 +99,7 @@ export default class signIn extends Component {
             }}
             onFocus={this.onFoc1}
             secureTextEntry={true}
+            autoCapitalize='none'
             placeholder="Password"
           />
         </View>

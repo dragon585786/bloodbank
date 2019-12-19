@@ -10,18 +10,53 @@ import {
   ActivityIndicator
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+
+//firebase initialization
+import * as firebase from "firebase";
 
 export default class regIn extends Component {
   state = {
     backgroundColor: "rgba(255,255,255,0.2)",
     backgroundColor1: "rgba(255,255,255,0.2)",
     backgroundColor2: "rgba(255,255,255,0.2)",
-    backgroundColor3: "rgba(255,255,255,0.2)"
+    backgroundColor3: "rgba(255,255,255,0.2)",
+    username: "",
+    email: "",
+    password: "",
+    passConfirm: ""
   };
 
-  navigateToDash = () => {
-    this.props.navigation.navigate("App");
-    console.log("worked");
+  navigateToDash = (email, password, username) => {
+    try {
+      if (email.length < 6) {
+        console.log("Not possinle ");
+        return;
+      }
+      var key = firebase.database().ref('users/').push().key
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then( 
+          //var key = firebase.database().ref('users/').push().key
+          firebase.database().ref("users/" + key).set({
+              name: username,
+              email: email,
+              password: password
+            }).catch(errror => {
+              console.log(error);
+            })
+        );
+      this.props.navigation.navigate("App");
+    } catch (error) {
+      console.log(error);
+      console.log(email, password);
+    }
+  };
+
+  navigateToSign = () => {
+    this.props.navigation.navigate("AuthLoading");
+    console.log("worked1");
   };
 
   onFoc = () => {
@@ -63,6 +98,14 @@ export default class regIn extends Component {
         <View style={{ paddingTop: Expo.Constants.statusBarHeight }}></View>
         <StatusBar barStyle="default" />
 
+        <Ionicons
+          style={{ paddingLeft: 7 }}
+          name="md-arrow-round-back"
+          color="white"
+          size={35}
+          onPress={this.navigateToSign}
+        />
+
         <View style={styleMain.upper}>
           <Image
             style={styleMain.img}
@@ -73,7 +116,7 @@ export default class regIn extends Component {
         <View style={styleMain.lower}>
           <TextInput
             style={{
-              marginBottom: 20,
+              marginBottom: 17,
               flex: 1,
               fontFamily: "Roboto",
               height: 70,
@@ -85,12 +128,14 @@ export default class regIn extends Component {
               textAlign: "center",
               borderRadius: this.state.borderRadius
             }}
-            placeholder="UserName"
+            placeholder="Name"
             onFocus={this.onFoc}
+            autoCapitalize="none"
+            onChangeText={username => this.setState({ username })}
           />
           <TextInput
             style={{
-              marginBottom: 20,
+              marginBottom: 17,
               flex: 1,
               fontFamily: "Roboto",
               height: 70,
@@ -104,10 +149,12 @@ export default class regIn extends Component {
             }}
             placeholder="Email"
             onFocus={this.onFoc2}
+            autoCapitalize="none"
+            onChangeText={email => this.setState({ email })}
           />
           <TextInput
             style={{
-              marginBottom: 20,
+              marginBottom: 17,
               flex: 1,
               fontFamily: "Roboto",
               height: 70,
@@ -122,10 +169,12 @@ export default class regIn extends Component {
             onFocus={this.onFoc1}
             secureTextEntry={true}
             placeholder="Password"
+            autoCapitalize="none"
+            onChangeText={password => this.setState({ password })}
           />
           <TextInput
             style={{
-              marginBottom: 20,
+              marginBottom: 17,
               flex: 1,
               fontFamily: "Roboto",
               height: 70,
@@ -139,7 +188,8 @@ export default class regIn extends Component {
             }}
             onFocus={this.onFoc3}
             secureTextEntry={true}
-            placeholder="Password"
+            autoCapitalize="none"
+            placeholder="Confirm Password"
           />
         </View>
 
@@ -148,9 +198,14 @@ export default class regIn extends Component {
             <Button
               title="  REGISTER  "
               color="#df42d1"
-              onPress={this.navigateToDash}
+              onPress={() =>
+                this.navigateToDash(
+                  this.state.email,
+                  this.state.password,
+                  this.state.username
+                )
+              }
             />
-            
           </View>
         </View>
       </LinearGradient>
@@ -165,19 +220,19 @@ const styleMain = StyleSheet.create({
     flex: 1
   },
   upper: {
-    flex: 1.5,
+    flex: 1,
     alignItems: "center",
     justifyContent: "center"
   },
   lower: {
-    flex: 2,
+    flex: 1.6,
     alignItems: "center",
     elevation: 2
 
     //backgroundColor:'green',
   },
   bottom: {
-    flex: 2
+    flex: 1
   },
   img: {
     height: 70,
