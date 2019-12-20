@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {createDrawerNavigator} from 'react-navigation-drawer'
 import {createAppContainer, createSwitchNavigator} from 'react-navigation'
-import Screen1 from './src/Dash/screen1'
+import Dash from './src/Dash/dash'
 import Screen2 from './src/Dash/screen2'
 import Screen3 from './src/Dash/screen3'
 import signIn from './src/logins/signIn'
@@ -30,8 +30,8 @@ firebase.initializeApp(firebaseConfig);
 
 const AppStack = createDrawerNavigator({
   
-  Screen1: { 
-    screen: Screen1,
+  dashboard: { 
+    screen: Dash,
     navigationOptions: {
       title: "Demo Screen 1"
     }
@@ -57,7 +57,7 @@ export default createAppContainer(createSwitchNavigator(
     App: AppStack,
   },
   {
-    initialRouteName: 'AuthLoading',
+    initialRouteName: 'App',
   }
 ));
 

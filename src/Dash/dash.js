@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Button,StatusBar } from "react-native";
 
-export default class Screen1 extends Component {
+export default class Dash extends Component {
   SignIn = () => {
     this.props.navigation.navigate("AuthLoading");
   };

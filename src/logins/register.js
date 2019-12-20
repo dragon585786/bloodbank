@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Children } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,8 @@ import {
   StatusBar,
   TextInput,
   Image,
+  Alert,
+  ToastAndroid,
   ActivityIndicator
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -25,29 +27,88 @@ export default class regIn extends Component {
     email: "",
     password: "",
     passConfirm: ""
+    //isReg: false
   };
 
-  navigateToDash = (email, password, username) => {
+  navigateToDash = (email, password, username, passConfirm) => {
     try {
-      if (email.length < 6) {
-        console.log("Not possinle ");
-        return;
-      }
-      var key = firebase.database().ref('users/').push().key
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then( 
-          //var key = firebase.database().ref('users/').push().key
-          firebase.database().ref("users/" + key).set({
-              name: username,
-              email: email,
-              password: password
-            }).catch(errror => {
-              console.log(error);
-            })
+      var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+      if (username == "") {
+        ToastAndroid.showWithGravityAndOffset(
+          "Name Invalid",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50
         );
-      this.props.navigation.navigate("App");
+      } else if (reg.test(email) == false) {
+        ToastAndroid.showWithGravityAndOffset(
+          "Invalid Email",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50
+        );
+      } else if (password.length < 6) {
+        ToastAndroid.showWithGravityAndOffset(
+          "Password must be 6 characters",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50
+        );
+        //console.log(this.state.passConfirm)
+      } else if (password != passConfirm) {
+        ToastAndroid.showWithGravityAndOffset(
+          "Passwords don't match",
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM,
+          25,
+          50
+        );
+      } else {
+        firebase
+          .auth()
+          .fetchSignInMethodsForEmail(email)
+          .then(
+            //response => (response[0] == 'password') ? Alert.alert("Email Already Exists") this.setState({isReg:true}) : console.log('No email')
+            response => {
+              if (response[0] == "password") {
+                Alert.alert("Email Already Exists");
+                return false;
+              } else {
+                console.log("Email Not Registered Go ahead :)");
+                return true;
+              }
+            }
+          )
+          .then(response => {
+            if (response == true) {
+              firebase
+                .auth()
+                .createUserWithEmailAndPassword(email, password)
+                .then(response => {
+                  //  response.user.updateProfile({
+                  //   displayName: username
+                  // });
+                  console.log(response)
+                  firebase
+                    .database()
+                    .ref("users/" + response.user.uid)
+                    .set({
+                      displayName: username,  
+                      email: response.user.email,
+                      password: password,
+                    })
+                    .catch(error => {
+                      console.log(error);
+                    });
+                })
+              Alert.alert(" Sign Up Successfull ! Log In ");
+              this.props.navigation.navigate("AuthLoading");
+            }
+          });
+      }
     } catch (error) {
       console.log(error);
       console.log(email, password);
@@ -128,7 +189,7 @@ export default class regIn extends Component {
               textAlign: "center",
               borderRadius: this.state.borderRadius
             }}
-            placeholder="Name"
+            placeholder="UserName"
             onFocus={this.onFoc}
             autoCapitalize="none"
             onChangeText={username => this.setState({ username })}
@@ -190,6 +251,7 @@ export default class regIn extends Component {
             secureTextEntry={true}
             autoCapitalize="none"
             placeholder="Confirm Password"
+            onChangeText={passConfirm => this.setState({ passConfirm })}
           />
         </View>
 
@@ -202,7 +264,8 @@ export default class regIn extends Component {
                 this.navigateToDash(
                   this.state.email,
                   this.state.password,
-                  this.state.username
+                  this.state.username,
+                  this.state.passConfirm
                 )
               }
             />
